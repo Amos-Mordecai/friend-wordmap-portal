@@ -1,0 +1,29 @@
+services:
+  - type: web
+    name: friend-wordmap-backend
+    env: node
+    buildCommand: cd backend && npm install
+    startCommand: cd backend && npm start
+    envVars:
+      - key: MONGODB_URI
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: NODE_ENV
+        value: production
+    healthCheckPath: /api/users/health
+    autoDeploy: true
+
+  - type: web
+    name: friend-wordmap-frontend
+    env: static
+    buildCommand: cd frontend && npm install && npm run build
+    staticPublishPath: frontend/build
+    envVars:
+      - key: REACT_APP_API_URL
+        value: https://friend-wordmap-backend.onrender.com
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    autoDeploy: true 
